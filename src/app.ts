@@ -1,5 +1,6 @@
 import express, { Application, Router } from 'express'
 import mongoose from 'mongoose';
+import bodyParser from 'body-parser'
 import logger from './utils/logger.util';
 
 class App {
@@ -7,6 +8,14 @@ class App {
 
   constructor() {
     this.app.use(express.static('public'))
+    this.app.use(function(_, response, next) {
+      response.header("Access-Control-Allow-Origin", "*");
+      response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+      next();
+    });
+    this.app.use(bodyParser.urlencoded({ extended: false }))
+    this.app.use(bodyParser.json())
   }
 
   public setMiddlewares(middlewares: { forEach: (arg0: (middleware: any) => void) => void; }) {
@@ -21,10 +30,13 @@ class App {
     }
   }
 
-  public connectDB(dbURI: String) {
+  public connectDB(dbURI: string) {
     mongoose
-      .connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true })
-      .catch(error => logger.log('error', error))
+      .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+      .catch(error => {
+        logger.log('error', error);
+        console.error(error)
+      })
   }
 
   public listen(port: Number) {
