@@ -19,7 +19,7 @@ const create = (request: Request, response: Response) => {
             console.log(error)
             return response.status(500).json({ status: 500 })
         };
-        return response.status(200).json({ status: 200 })
+        return response.status(200).json({ status: 200, data: newBoThu })
     });
 }
 
